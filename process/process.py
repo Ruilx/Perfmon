@@ -39,10 +39,11 @@ class Process(object):
 
     def __doHandleIntValue(self, nullable):
         """
-        取得的value转换成int格式, 确保value类型是int(容忍value是int型str的转换)
+        取得的value转换成int格式, 确保value类型是int(容忍value是int型的字符串)
         由_doExpect调用
-        :return: void
-        :raise: ValueError
+        :param nullable: bool value是否可以为None
+        :return void: 内部改变self._value的值, 有问题走异常, 不需要返回
+        :raise ValueError: 如果为None(nullable==False)或不能转换时将会抛出异常
         """
         if not isinstance(self._value, int):
             if nullable and self._value is None:
@@ -53,6 +54,13 @@ class Process(object):
                 raise ValueError(f"value expect type 'int'(int), but type '{type(self._value)}' found.")
 
     def __doHandleRealValue(self, nullable):
+        """
+        取得的value转成float格式, 确保value类型是float(容忍value是float型的字符串)
+        由_doExpect调用
+        :param nullable: bool value是否可以为None
+        :return void: 内部改变self._value的值, 有问题走异常, 不需要返回
+        :raise ValueError: 如果为None(nullable==False)或不能转换时将会抛出异常
+        """
         if not isinstance(self._value, float):
             if nullable and self._value is None:
                 return
