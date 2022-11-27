@@ -34,3 +34,7 @@ def format(name):
             raise NameError(f"name '{name}' already in format factory.")
     return decorator
 
+class FormatError(RuntimeError):
+    def __init__(self, msg):
+        super().__init__(msg)
+        self.msg = msg

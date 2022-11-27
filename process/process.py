@@ -5,21 +5,24 @@ from formats.format import FormatFactory
 
 
 class Process(object):
-    ValidExpectEnum = ('int', 'intOrNull', 'real', 'realOrNull', 'string', 'stringOrNull', 'null')
+    ValidExpectEnum = ['int', 'intOrNull', 'real', 'realOrNull', 'string', 'stringOrNull', 'null']
 
-    def __init__(self, config):
+    def __init__(self, config: dict, name: str):
+        self._config = config
+        self._name = name
         self._method = util.checkKey("method", config, str, "process")
         self._format = util.checkKey("format", config, (str, list), "process")
         self._expect = util.checkKey("expect", config, str, "process")
         self._waiting = util.checkKey("waiting", config, str, "process")
 
-        expect = util.checkValueEnum(self._expect, Process.ValidExpectEnum, valueName="expect")
-
+        util.checkValueEnum(self._expect, Process.ValidExpectEnum, valueName="expect")
         self._value = None
+
+        self.checkProcess()
 
     def _doFormat(self):
         """
-        从
+        从format工厂中处理所得到的值
         :return:
         """
         def __doFormat(cur):
@@ -104,4 +107,16 @@ class Process(object):
         elif self._expect == "null":
             self.__doHandleNullValue()
 
+    def checkProcess(self):
+        raise NotImplementedError(f"{__name__}.{__method__} need implement.")
+    def setup(self):
+        raise NotImplementedError(f"{__name__}.{__method__} need implement.")
 
+    def run(self):
+        raise NotImplementedError(f"{__name__}.{__method__} need implement.")
+
+    def join(self):
+        raise NotImplementedError(f"{__name__}.{__method__} need implement.")
+
+    def submit(self):
+        ...

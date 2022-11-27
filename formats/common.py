@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from format import format
+from format import format, FormatError
 import re
 
 
 @format("toInt")
 def toInt(value):
-    ...
+    try:
+        return int(value)
+    except BaseException as e:
+        raise FormatError(e) from e
 
+@format("toFloat")
+def toFloat(value):
+    try:
+        return float(value)
+    except BaseException as e:
+        raise FormatError(e) from e

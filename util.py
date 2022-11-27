@@ -2,6 +2,8 @@
 
 from functools import wraps
 
+from urllib3.util import parse_url
+
 
 def checkKey(key: str, cfg: dict, typ, cfgName: str):
     if key in cfg:
@@ -24,6 +26,13 @@ def checkValueEnum(value, valueMustInList: (list, tuple), valueCanBeNone=False, 
         else:
             raise ValueError(
                 f"Given {valueName if valueName else ''} value must in {','.join(valueMustInList)}, but get value: {value}")
+
+
+def checkUrl(url: str):
+    url_t = parse_url(url)
+    assert url_t.scheme not in (
+        "http", "https"), f"server scheme only support 'HTTP' or 'HTTPS', but '{url_t.scheme}' found."
+    return True
 
 
 def singleton(cls):

@@ -1,40 +1,46 @@
 {
-    "agent_name": "Nassy",
-    "perfmon": [
-        {
-            "name": "cpu_0_freq",
-            "type": "cpufreq",
-            "delay": 60000,
-            "process": {
-                "method": "readfile",
-                "path": "/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq",
-                "format": "ToInt",
-                "expect": "int",
-                "waiting": 10000
-            }
-        },{
-            "name": "cpu_0_temp",
-            "type": "cputemp",
-            "delay": 60000,
-            "process": {
-                "method": "readfile",
-                "path": "/.../",
-                "format": "ToInt",
-                "expect": "int",
-                "waiting": 10000
-            }
-        },{
-            "name": "cpu_cores",
-            "type": "invalid",
-            "delay": 60000,
-            "process": {
-                "method": "execute",
-                "exec": "cat",
-                "params": ["/proc/cpuinfo"],
-                "format": null,
-                "expect": "string",
-                "waiting": 10000
-            }
-        }
-    ]
+  "agent_name": "Nassy",
+  "server": "http://angila/perfmon/post",
+  "perfmon": [
+    {
+      "name": "cpu_0_freq",
+      "type": "cpufreq",
+      "delay": 60000,
+      "wait": 10000,
+      "process": {
+        "method": "readfile",
+        "path": "/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq",
+        "format": "ToInt",
+        "expect": "int",
+        "length": 1024
+      }
+    },
+    {
+      "name": "cpu_0_temp",
+      "type": "cputemp",
+      "delay": 60000,
+      "process": {
+        "method": "readfile",
+        "path": "/.../",
+        "format": "ToInt",
+        "expect": "int",
+        "waiting": 10000
+      }
+    },
+    {
+      "name": "cpu_cores",
+      "type": "invalid",
+      "delay": 60000,
+      "process": {
+        "method": "execute",
+        "exec": "cat",
+        "params": [
+          "/proc/cpuinfo"
+        ],
+        "format": null,
+        "expect": "string",
+        "waiting": 10000
+      }
+    }
+  ]
 }
