@@ -6,9 +6,13 @@ Prefmon agent
 
 """
 
+__author__ = "Ruilx"
+__organization__ = "GT-Soft"
+
 import argparse
 import sys
-from cfg import Cfg
+
+from config import Config
 
 
 def argBuilder():
@@ -19,7 +23,7 @@ def argBuilder():
 
 def main():
     args = argBuilder()
-    cfg = Cfg(args.config)
+    cfg = Config(args.config)
     print(cfg.getAgentName())
 
 

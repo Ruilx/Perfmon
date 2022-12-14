@@ -4,18 +4,19 @@ import util
 from formats.format import FormatFactory
 
 
-class Process(object):
+class ProcessBase(object):
     ValidExpectEnum = ['int', 'intOrNull', 'real', 'realOrNull', 'string', 'stringOrNull', 'null']
 
     def __init__(self, config: dict, name: str):
         self._config = config
         self._name = name
+        self._queue = queue
         self._method = util.checkKey("method", config, str, "process")
         self._format = util.checkKey("format", config, (str, list), "process")
         self._expect = util.checkKey("expect", config, str, "process")
         self._waiting = util.checkKey("waiting", config, str, "process")
 
-        util.checkValueEnum(self._expect, Process.ValidExpectEnum, valueName="expect")
+        util.checkValueEnum(self._expect, ProcessBase.ValidExpectEnum, valueName="expect")
         self._value = None
 
         self.checkProcess()
@@ -25,6 +26,7 @@ class Process(object):
         从format工厂中处理所得到的值
         :return:
         """
+
         def __doFormat(cur):
             if isinstance(cur, str):
                 return FormatFactory()[cur](self._value)
@@ -109,6 +111,7 @@ class Process(object):
 
     def checkProcess(self):
         raise NotImplementedError(f"{__name__}.{__method__} need implement.")
+
     def setup(self):
         raise NotImplementedError(f"{__name__}.{__method__} need implement.")
 
@@ -118,5 +121,6 @@ class Process(object):
     def join(self):
         raise NotImplementedError(f"{__name__}.{__method__} need implement.")
 
-    def submit(self):
-        ...
+    def checkValue(self):
+        self._doFormat()
+        self._doExpect()

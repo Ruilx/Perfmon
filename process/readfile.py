@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import io
-
-from process import Process
-
-import util
-
 from pathlib import Path
 
-class Readfile(Process):
+import util
+from process_base import ProcessBase
+
+
+class Readfile(ProcessBase):
     def __init__(self, config, name):
         self._path = None
         self._length = 0
@@ -29,6 +28,7 @@ class Readfile(Process):
 
     def openFile(self):
         self._fd = self._path.open("r", encoding="utf-8")
+
     def setup(self):
         if not isinstance(self._path, Path):
             raise RuntimeError(f"Perfmon item {self._name} with readfile method has no valid path: '{self._path!r}'")

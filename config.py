@@ -3,7 +3,7 @@ import json
 import os.path
 
 
-class Cfg(object):
+class Config(object):
     def __init__(self, filepath):
         self.cfg = {}
         self.__loadCfg(filepath)
@@ -14,7 +14,7 @@ class Cfg(object):
 
     def __loadCfg(self, filepath):
         if not os.path.exists(filepath):
-            raise ValueError(f"Cfg: filepath: '{filepath}' not valid.")
+            raise ValueError(f"CConfig: filepath: '{filepath}' not valid.")
         with open(filepath, 'r') as fd:
             self.cfg = json.load(fd)
 
@@ -47,5 +47,3 @@ class Cfg(object):
 
     def getAgentName(self):
         return self.__findKey("agent_name")
-
-
