@@ -5,12 +5,13 @@ import sys
 
 from util import singleton
 
+
 @singleton
 class Logger(object):
     def __init__(self):
         self.loggers = {}
 
-    def addLogger(self, name, level=):
+    def addLogger(self, name, level=logging.DEBUG):
         logger = logging.getLogger(name)
         logger.setLevel(level)
         self._setup(logger)

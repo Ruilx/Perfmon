@@ -2,7 +2,7 @@
 import datetime
 import logging
 from threading import Timer
-
+from multiprocessing import Queue
 
 class Submit(object):
     def __init__(self, capacity: int = 20, timeout: int = 10000):
@@ -46,8 +46,8 @@ class Submit(object):
             self.timer.run()
 
     def submit(self, data: dict):
-        if "create_time" not in data:
-            data['create_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if "submit_time" not in data:
+            data['submit_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.buf.append(data)
         self.timerStop()
         self.checkBuf()

@@ -3,13 +3,15 @@
 import util
 from formats.format import FormatFactory
 
+from multiprocessing import Queue
+
 
 class ProcessBase(object):
     ValidExpectEnum = ['int', 'intOrNull', 'real', 'realOrNull', 'string', 'stringOrNull', 'null']
 
-    def __init__(self, config: dict, name: str):
-        self._config = config
+    def __init__(self, config, name, queue: Queue):
         self._name = name
+        self._config = config
         self._queue = queue
         self._method = util.checkKey("method", config, str, "process")
         self._format = util.checkKey("format", config, (str, list), "process")
@@ -18,8 +20,15 @@ class ProcessBase(object):
 
         util.checkValueEnum(self._expect, ProcessBase.ValidExpectEnum, valueName="expect")
         self._value = None
-
         self.checkProcess()
+        self._running = True
+        self.setup()
+
+    def __del__(self):
+        self.join()
+
+    def name(self):
+        return self._name
 
     def _doFormat(self):
         """
@@ -75,6 +84,13 @@ class ProcessBase(object):
                 raise ValueError(f"value expect type 'real'(float), but type '{type(self._value)}' found.")
 
     def __doHandleStringValue(self, nullable):
+        """
+        取得的value转成string格式, 确保value类型是string
+        由_doExpect调用
+        :param nullable: bool value是否可以为None
+        :return: void: 内部改变self._value的值, 有问题走异常, 不需要返回
+        :raise ValueError: 如果为None(nullable==False)或不能转换时将会抛出异常
+        """
         if not isinstance(self._value, str):
             if nullable and self._value is None:
                 return
@@ -89,7 +105,6 @@ class ProcessBase(object):
 
     def _doExpect(self):
         """
-
         :param self:
         :return:
         :raise: ValueError
@@ -115,12 +130,25 @@ class ProcessBase(object):
     def setup(self):
         raise NotImplementedError(f"{__name__}.{__method__} need implement.")
 
-    def run(self):
+    def run(self, params):
         raise NotImplementedError(f"{__name__}.{__method__} need implement.")
 
     def join(self):
         raise NotImplementedError(f"{__name__}.{__method__} need implement.")
 
-    def checkValue(self):
+    def _doProcess(self, params):
+        self.run(params)
+
+    def process(self, params):
+        self._doProcess(params)
         self._doFormat()
         self._doExpect()
+        self.submit(params)
+
+    def submit(self, params):
+        self._queue.put({
+            'name': self._name,
+            'params': params,
+            'except': self._expect,
+            'value': self._value,
+        })

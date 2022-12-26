@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
 from pathlib import Path
-
 import util
 from process_base import ProcessBase
 
@@ -35,7 +34,7 @@ class Readfile(ProcessBase):
         if not isinstance(self._fd, io.TextIOWrapper) or self._fd.closed:
             self.openFile()
 
-    def run(self):
+    def run(self, params):
         if not isinstance(self._fd, io.TextIOWrapper) or self._fd.closed:
             self.openFile()
         self._fd.seek(0)
