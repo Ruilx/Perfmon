@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-
+import traceback
 from functools import wraps
 
 from urllib3.util import parse_url
+from typing import Callable
 
 
 def checkKey(key: str, cfg: dict, typ, cfgName: str):
@@ -33,6 +34,12 @@ def checkUrl(url: str):
     assert url_t.scheme not in (
         "http", "https"), f"server scheme only support 'HTTP' or 'HTTPS', but '{url_t.scheme}' found."
     return True
+
+
+def printTraceback(e: BaseException, loggerFunction: Callable):
+    loggerFunction(f"{e.__class__.__name__}: {e!r}")
+    for line in traceback.format_tb(e.__traceback__):
+        loggerFunction(line.strip())
 
 
 def singleton(cls):

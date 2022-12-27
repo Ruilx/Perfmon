@@ -5,6 +5,8 @@ from formats.format import FormatFactory
 
 from multiprocessing import Queue
 
+from logger import Logger
+
 
 class ProcessBase(object):
     ValidExpectEnum = ['int', 'intOrNull', 'real', 'realOrNull', 'string', 'stringOrNull', 'null']
@@ -18,10 +20,14 @@ class ProcessBase(object):
         self._expect = util.checkKey("expect", config, str, "process")
         self._waiting = util.checkKey("waiting", config, str, "process")
 
+        try:
+            self._retry = util.checkKey("retry", config, str, "process")
+        except ValueError:
+            self._retry = 3
+
         util.checkValueEnum(self._expect, ProcessBase.ValidExpectEnum, valueName="expect")
         self._value = None
         self.checkProcess()
-        self._running = True
         self.setup()
 
     def __del__(self):
@@ -137,13 +143,26 @@ class ProcessBase(object):
         raise NotImplementedError(f"{__name__}.{__method__} need implement.")
 
     def _doProcess(self, params):
-        self.run(params)
+        error = None
+        for attempt in range(self._retry):
+            try:
+                self.run(params)
+                self._doFormat()
+                self._doExpect()
+                error = None
+                break
+            except BaseException as e:
+                Logger().getLogger(__name__).error(f"Exception occurred while processing: {e!r}")
+                util.printTraceback(e, Logger().getLogger(__name__).error)
+                error = e
+                continue
+        if error is not None:
+            self.submitError(params, error)
+        else:
+            self.submit(params)
 
     def process(self, params):
-        self._doProcess(params)
-        self._doFormat()
-        self._doExpect()
-        self.submit(params)
+        return self._doProcess(params)
 
     def submit(self, params):
         self._queue.put({
@@ -151,4 +170,16 @@ class ProcessBase(object):
             'params': params,
             'except': self._expect,
             'value': self._value,
+            'errno': 0,
+            'error': "",
+        })
+
+    def submitError(self, params, exception: BaseException):
+        self._queue.put({
+            'name': self._name,
+            'params': params,
+            'except': self._expect,
+            'value': self._value,
+            'errno': 1,
+            'error': "{}: {}".format(exception.__class__.__name__, exception.__repr__())
         })

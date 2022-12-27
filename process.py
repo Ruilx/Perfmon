@@ -5,6 +5,9 @@ from multiprocessing import Queue
 from logger import Logger
 from process.process_base import ProcessBase
 
+import util
+
+
 class Process(object):
     def __init__(self, queue: Queue):
         self._queue = queue
@@ -17,7 +20,7 @@ class Process(object):
     def setRun(self, running: bool):
         self.running = running
 
-    def run():
+    def run(self):
         while self.running:
             data = self._queue.get()
 
@@ -41,5 +44,15 @@ class Process(object):
                     for item in self._process_items.keys():
                         Logger().getLogger(__name__).info(item)
                     Logger().getLogger(__name__).info("")
+                    continue
 
-                process = self._process_items[data['name']]
+                if 'params' not in data:
+                    Logger().getLogger(__name__).error(f"queue data expect a 'param' key in it, but get: {data!r}")
+                    continue
+
+                process: ProcessBase = self._process_items[data['name']]
+                try:
+                    process.process(data['params'])
+                except BaseException as e:
+                    Logger().getLogger(__name__).error(f"Process {data['name']} has unhandled exception: {e!r}")
+                    util.printTraceback(e, Logger().getLogger(__name__).error)
