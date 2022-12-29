@@ -166,20 +166,24 @@ class ProcessBase(object):
 
     def submit(self, params):
         self._queue.put({
+            'cmd': "result",
             'name': self._name,
             'params': params,
             'except': self._expect,
             'value': self._value,
             'errno': 0,
             'error': "",
+            'timestamp': util.timestamp()
         })
 
     def submitError(self, params, exception: BaseException):
         self._queue.put({
+            'cmd': "error",
             'name': self._name,
             'params': params,
             'except': self._expect,
             'value': self._value,
             'errno': 1,
-            'error': "{}: {}".format(exception.__class__.__name__, exception.__repr__())
+            'error': "{}: {}".format(exception.__class__.__name__, exception.__repr__()),
+            'timestamp': util.timestamp()
         })

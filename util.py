@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import time
 import traceback
+from datetime import datetime
 from functools import wraps
 
 from urllib3.util import parse_url
@@ -52,3 +54,11 @@ def singleton(cls):
         return instances[cls]
 
     return getInstance
+
+
+def timestamp():
+    return int(time.time())
+
+
+def now():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")

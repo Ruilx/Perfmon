@@ -26,11 +26,26 @@ class SubmitProcess(object):
                 Logger().getLogger(__name__).error(f"queue data expect a 'cmd' key in it, but got: {data!r}")
                 continue
 
+            """
+            data expecting structure:
+            {
+                'cmd':       str,   # <required> ["result", "error", "quit"]
+                'name':      str,   # <required>
+                'params':    dict,  # <required>
+                'except':    str,   # <required>
+                'value':     any,   # <required> <default:None>
+                'errno':     int,   # <required> <default:0>
+                'error':     str,   # <required> <default:"">
+                'timestamp': int,   # submit timestamp: utc seconds
+            }
+            """
+
             if data['cmd'] == "quit":
                 # shutdown...
                 self.setRun(False)
                 continue
 
-            if data['cmd'] == "result":
+            if data['cmd'] in ("result", "error"):
                 for submit in self.submits:
                     submit.submit(data)
+                continue
