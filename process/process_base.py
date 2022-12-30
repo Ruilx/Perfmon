@@ -52,6 +52,8 @@ class ProcessBase(object):
                     if not currentValue:
                         return None
                 return currentValue
+            elif cur is None:
+                return self._value
             else:
                 raise ValueError(f"cur items need format str, but '{type(cur)}' found.")
 

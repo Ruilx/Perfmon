@@ -5,8 +5,8 @@
     {
       "name": "cpu_0_freq",
       "type": "cpufreq",
-      "delay": 60000,
-      "wait": 10000,
+      "delay": 60,
+      "wait": 10,
       "process": {
         "method": "readfile",
         "path": "/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq",
@@ -18,19 +18,19 @@
     {
       "name": "cpu_0_temp",
       "type": "cputemp",
-      "delay": 60000,
+      "delay": 60,
       "process": {
         "method": "readfile",
         "path": "/.../",
         "format": "ToInt",
         "expect": "int",
-        "waiting": 10000
+        "waiting": 10
       }
     },
     {
       "name": "cpu_cores",
       "type": "invalid",
-      "delay": 60000,
+      "delay": 60,
       "process": {
         "method": "execute",
         "exec": "cat",
@@ -39,7 +39,7 @@
         ],
         "format": null,
         "expect": "string",
-        "waiting": 10000
+        "waiting": 10
       }
     }
   ]

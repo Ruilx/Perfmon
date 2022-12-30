@@ -6,11 +6,11 @@ from process_base import ProcessBase
 
 
 class Readfile(ProcessBase):
-    def __init__(self, config, name):
+    def __init__(self, config, name, queue):
         self._path = None
         self._length = 0
         self._fd = None
-        super().__init__(config, name)
+        super().__init__(config, name, queue)
 
     def checkProcess(self):
         if self._method != "readfile":

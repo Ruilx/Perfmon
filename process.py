@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from multiprocessing import Queue
+from typing import overload
 
 from logger import Logger
 from process.process_base import ProcessBase
